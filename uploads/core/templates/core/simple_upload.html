@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+
+{% load static %}
+
+{% block content %}
+  <form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    <input type="file" name="myfile">
+    <button type="submit">Upload</button>
+  </form>
+
+  {% if down_filename %}
+{#    <p>File download at: <a href="{{down_filename}}">{{ down_filename }}</a></p>#}
+     <p>File download at: <a href="{% url 'file_download' in_file=down_filename %}">Click Here</a></p>
+  {% endif %}
+
+  <p><a href="{% url 'home' %}">Return to home</a></p>
+{% endblock %}
