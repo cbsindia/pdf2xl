@@ -22,7 +22,6 @@ def pdf2xl(in_file):
     in_file_with_path = os.path.join(fs.base_location,in_file)
     script_path = os.path.join(apps.get_app_config('pdf2xl').path,'jtoxl.py')
     cmd = 'python {} {}'.format(script_path,in_file_with_path)
-    print(cmd)
     os.system(cmd)
 
 @csrf_exempt
