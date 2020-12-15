@@ -10,7 +10,6 @@
   </form>
 
   {% if down_filename %}
-{#    <p>File download at: <a href="{{down_filename}}">{{ down_filename }}</a></p>#}
      <p>File download at: <a href="{% url 'file_download' in_file=down_filename %}">Click Here</a></p>
   {% endif %}
 

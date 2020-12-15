@@ -4,7 +4,8 @@ from django.apps import apps
 from django.core.files.storage import FileSystemStorage
 from django.utils.crypto import get_random_string
 import os
-import time
+from django.views.decorators.csrf import csrf_protect,csrf_exempt
+from django.http import HttpResponse
 
 from pdf2xl import *
 from uploads.core.models import Document
@@ -24,7 +25,7 @@ def pdf2xl(in_file):
     print(cmd)
     os.system(cmd)
 
-
+@csrf_exempt
 def simple_upload(request):
     if request.method == 'POST' and request.FILES['myfile']:
 
@@ -39,8 +40,6 @@ def simple_upload(request):
         download_file = os.path.join(down_path, '{}.xlsx'.format(in_file_without_ext))
 
         pdf2xl(filename)
-        print(type(fs.url(download_file)))
-        print(os.path.relpath(fs.url(download_file), '/media'))
 
 
         return render(request, 'core/simple_upload.html', {
@@ -48,6 +47,26 @@ def simple_upload(request):
         })
     return render(request, 'core/simple_upload.html')
 
+@csrf_exempt
+def api_upload(request):
+    if request.method == 'POST' and request.FILES['myfile']:
+
+        myfile = request.FILES['myfile']
+        fs = FileSystemStorage()
+        down_path = os.path.join('download')
+        tran_id = get_random_string(6)
+        myfile.name = '{}-{}'.format(tran_id,myfile.name)
+        filename = fs.save(myfile.name, myfile)
+        # uploaded_file_url = fs.url(filename)
+        in_file_without_ext = os.path.splitext(os.path.basename(myfile.name))[0]
+        download_file = os.path.join(down_path, '{}.xlsx'.format(in_file_without_ext))
+
+        pdf2xl(filename)
+
+
+        return HttpResponse(download_file)
+
+    return render(request, 'core/simple_upload.html')
 
 def model_form_upload(request):
     if request.method == 'POST':
